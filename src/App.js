@@ -19,9 +19,9 @@ function App() {
   const handleSignIn = () => {
     firebase.auth()
       .signInWithPopup(provider)
-      .then(res=> {
-        const {displayName, email, photoURL }= res.user;
-        const signedInUser =  {
+      .then(res => {
+        const { displayName, email, photoURL } = res.user;
+        const signedInUser = {
           isSignedIn: true,
           name: displayName,
           email: email,
@@ -30,25 +30,49 @@ function App() {
         setUser(signedInUser);
         console.log(displayName, email, photoURL);
       })
-      .catch((err)=>{
+      .catch((err) => {
         console.log(err);
         console.log(err.message);
       });
-}
+  }
 
-return (
-  <div className="App">
-    <h1>Firebase Auth</h1>
-    <button onClick={handleSignIn}>Sign in</button>
-    {
-      user.isSignedIn && <div>
-        <p>Welcome, {user.name}</p>
-        <p>Your Email {user.email}</p>
-        <img src={user.photo} alt=""/>
-      </div>
-    }
-  </div>
-);
+  const handleSignOut = () => {
+    firebase.auth()
+      .signOut()
+      .then(res => {
+        const signedOutUser ={
+          isSignedIn: false,
+          name: '',
+          email: '',
+          photo: ''
+        }
+        setUser(signedOutUser)
+        console.log(res)
+      })
+      .catch(err=>{
+        console.log(err);
+        console.log(err.message);
+      })
+
+  }
+
+  return (
+    <div className="App">
+      <h1>Firebase Auth</h1>
+
+      {
+        user.isSignedIn ? <button onClick={handleSignOut}>Sign out</button>
+          : <button onClick={handleSignIn}>Sign in</button>
+      }
+      {
+        user.isSignedIn && <div>
+          <p>Welcome, {user.name}</p>
+          <p>Your Email {user.email}</p>
+          <img src={user.photo} alt="" />
+        </div>
+      }
+    </div>
+  );
 }
 
 export default App;
