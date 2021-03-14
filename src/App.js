@@ -13,6 +13,7 @@ function App() {
     isSignedIn: false,
     name: '',
     email: '',
+    password: '',
     photo: ''
   })
   const provider = new firebase.auth.GoogleAuthProvider();
@@ -41,7 +42,7 @@ function App() {
     firebase.auth()
       .signOut()
       .then(res => {
-        const signedOutUser ={
+        const signedOutUser = {
           isSignedIn: false,
           name: '',
           email: '',
@@ -50,10 +51,30 @@ function App() {
         setUser(signedOutUser)
         console.log(res)
       })
-      .catch(err=>{
+      .catch(err => {
         console.log(err);
         console.log(err.message);
       })
+
+  }
+
+  const handleBlur = (event) => {
+    let isFromValid = true;
+    if (event.target.name === 'email') {
+      isFromValid = /^\S+@\S+\.\S+/.test(event.target.value);
+    }
+    if (event.target.name === 'password') {
+      const isPasswordValid = event.target.value.length > 6;
+      const isPasswordNumber = /\d{1}/.test(event.target.value);
+      isFromValid = isPasswordValid && isPasswordNumber;
+    }
+    if (isFromValid) {
+      const newUserInfo = { ...user };
+      newUserInfo[event.target.name] = event.target.value;
+      setUser(newUserInfo);
+    }
+  }
+  const handleSubmit = () => {
 
   }
 
@@ -72,7 +93,20 @@ function App() {
           <img src={user.photo} alt="" />
         </div>
       }
-        <LoginForm></LoginForm>
+      
+      <h2>Our own Authentication</h2>
+      <p>Name: {user.name}</p>
+      <p>Email: {user.email}</p>
+      <p>Password: {user.password}</p>
+      <form onSubmit={handleSubmit}>
+        Name: <input type="text" name="name" onBlur={handleBlur} placeholder="Your name"/>
+        <br/>
+        Email: <input type="text" name="email" onBlur={handleBlur} placeholder="Enter Your Email" required />
+        <br />
+                Password: <input type="password" name="password" onBlur={handleBlur} placeholder="Enter Your Password" required />
+        <br />
+        <input type="submit" value="submit" />
+      </form>
     </div>
   );
 }
