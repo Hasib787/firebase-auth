@@ -46,7 +46,9 @@ function App() {
           isSignedIn: false,
           name: '',
           email: '',
-          photo: ''
+          photo: '',
+          error: '',
+          success: false
         }
         setUser(signedOutUser)
         console.log(res)
@@ -74,8 +76,24 @@ function App() {
       setUser(newUserInfo);
     }
   }
-  const handleSubmit = () => {
-
+  const handleSubmit = (event) => {
+    if (user.email && user.password) {
+      firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
+        .then((res) => {
+          // Signed in 
+          const newUserInfo ={...user};
+          newUserInfo.error = '';
+          newUserInfo.success = true;
+          setUser(newUserInfo);
+        })
+        .catch((error) => {
+          const newUserInfo = {...user};
+          newUserInfo.error = error.message;
+          newUserInfo.success = false;
+          setUser(newUserInfo);
+        });
+    }
+    event.preventDefault();
   }
 
   return (
@@ -93,20 +111,21 @@ function App() {
           <img src={user.photo} alt="" />
         </div>
       }
-      
+
       <h2>Our own Authentication</h2>
-      <p>Name: {user.name}</p>
-      <p>Email: {user.email}</p>
-      <p>Password: {user.password}</p>
+
       <form onSubmit={handleSubmit}>
-        Name: <input type="text" name="name" onBlur={handleBlur} placeholder="Your name"/>
-        <br/>
+        Name: <input type="text" name="name" onBlur={handleBlur} placeholder="Your name" />
+        <br />
         Email: <input type="text" name="email" onBlur={handleBlur} placeholder="Enter Your Email" required />
         <br />
                 Password: <input type="password" name="password" onBlur={handleBlur} placeholder="Enter Your Password" required />
         <br />
         <input type="submit" value="submit" />
       </form>
+      <p style={{color:'red'}}>{user.error}</p>
+      {user.success && <p style={{color:'green'}}>User Created Successfully</p>}
+      
     </div>
   );
 }
