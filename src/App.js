@@ -4,6 +4,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import firebaseConfig from './firebase.config';
 import { useState } from 'react';
+import LoginForm from './components/LoginForm/LoginForm';
 
 firebase.initializeApp(firebaseConfig);
 
@@ -71,6 +72,7 @@ function App() {
           <img src={user.photo} alt="" />
         </div>
       }
+        <LoginForm></LoginForm>
     </div>
   );
 }
